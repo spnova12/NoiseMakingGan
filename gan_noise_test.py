@@ -22,15 +22,15 @@ checkpoint = torch.load(checkpoint_dir)
 netG = Generator().to(device)
 netG.load_state_dict(checkpoint['netG'])
 
-# training 하는 도중에 eval 을 해주기 위해 camera model 을 생성해준다.
-scene_instances_txt = "/home/lab/works/datasets/ssd2/ntire/Scene_Instances.txt"
 
-# 1. 먼저 ntire dataset 의 정보가 담긴 text 파일을 읽는다.
+scene_instances_txt = "Scene_Instances.txt"
+
+# 1. Read text file containing ntire dataset's information
 f = open(scene_instances_txt, 'r')
 lines = f.readlines()
 f.close()
-# 2. 읽은 파일에서 폰 종류, iso, shutter speed 만 파싱해서 list 로 만들어준다.
-#    list 에서 random 으로 조건을 뽑아서 사용할 수 있다.
+
+# 2. Information(smartphone-code, iso, shutter speed) to list.
 ntire_info_list = []
 for line in lines:
     line = line.split('_')
@@ -38,18 +38,17 @@ for line in lines:
 
 print(ntire_info_list)
 
-
-
 phonecam = PhoneCam(scene_instances_txt, netG)
 
-test_imgs_folder_dir = '/home/lab/works/datasets/ssd2/flickr/validation/GroundTruth'
+# This is folder directory containing clean images(GroundTruth)
+test_imgs_folder_dir = 'flickr_test_imgs/GroundTruth'
 test_imgs_dirs = [join(test_imgs_folder_dir, x) for x in sorted(listdir(test_imgs_folder_dir))]
 
 """
-camera_info 예시 : ('G4', 100, 60) # (기종, iso, shutter_speed)
+camera_info example : ('G4', 100, 60) # (smartphone-code, iso, shutter_speed)
 
-iso 최대는 10000
-shutter_speed 최대는 8460
+Max iso : 10000
+Max shutter_speed : 8460
 
 GP: Google Pixel
 IP: iPhone 7
@@ -58,10 +57,16 @@ N6: Motorola Nexus 6
 G4: LG G4
 """
 
-folder_dir = make_dirs('/home/lab/works/datasets/ssd2/flickr/validation/Noisy_gan')
+# results will be saved in this directory.
+folder_dir = make_dirs('flickr_test_imgs/Noisy_gan')
 
 
 for test_img_dir in tqdm.tqdm(test_imgs_dirs):
+    # pick camera information randomly.
     camera_info = random.choice(ntire_info_list)
+
+    # with picked camera information, we add synthetic noises to clean images.
     test_output_img = phonecam.snap(test_img_dir, camera_info=camera_info)
+
+    # save synthetic noisy images.
     cv2.imwrite(folder_dir + '/' + os.path.basename(test_img_dir), test_output_img)
