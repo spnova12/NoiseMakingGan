@@ -24,5 +24,5 @@ Prerequisites
 
 How to Run
 -------------
-1. Download our gan model's checkpoint ([noiseG](https://drive.google.com/open?id=1wVOnzADw2paY-CUztQwKX5bbtSv5jzWA))
+1. Download our gan model's checkpoint ([noiseG.pkl](https://drive.google.com/open?id=1wVOnzADw2paY-CUztQwKX5bbtSv5jzWA))
 2. Run gan_noise_test.py  
