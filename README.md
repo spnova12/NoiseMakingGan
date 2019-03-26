@@ -1,4 +1,4 @@
-NTIRE_Noise_Making_GAN_test_code
+Realistic noise simulation(using GAN) test code
 =============
 These are Noise making GAN test scripts for [NTIRE 2019 Real Image Denoising Challenge](https://competitions.codalab.org/competitions/21258)  
 
